@@ -58,16 +58,3 @@ def get_movie_info(url: str) -> str:
         full_info = f"{title}:\n{transcript}"
 
     return full_info
-
-
-def main() -> None:
-    """Main funciton for this package."""
-    url: str = "https://subslikescript.com/movie/Taz_Quest_for_Burger-27469256"
-
-    print()  # \n
-    print(f"URL: {url}")
-    print(f"Movie title: {get_movie_info(url)}")
-
-
-if __name__ == "__main__":
-    main()
