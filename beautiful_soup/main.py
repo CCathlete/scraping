@@ -12,12 +12,12 @@ from typing_extensions import TypeAlias
 UpToOneElement: TypeAlias = Union[Tag, PageElement, None]
 
 
-def get_movie_title(url: str) -> str:
+def get_movie_info(url: str) -> str:
     """Gets a url for a movie in sublikescript.com and returns
     the movie's title.
     """
 
-    title: str = ""
+    full_info: str = ""
     response: requests.Response = requests.get(
         url,
         timeout=10,
@@ -40,18 +40,33 @@ def get_movie_title(url: str) -> str:
     if isinstance(article_element, Tag):
         h1_tag: UpToOneElement = article_element.find("h1")
         if h1_tag:
-            title = h1_tag.get_text()
+            title: str = h1_tag.get_text()
+        else:
+            title = "No title."
 
-    return title
+        div_fullscript: UpToOneElement = article_element.find(
+            "div", class_="full-script"
+        )
+        if div_fullscript:
+            transcript: str = div_fullscript.get_text(
+                strip=True,
+                separator=" ",
+            )
+        else:
+            transcript = "No full script."
+
+        full_info = f"{title}:\n{transcript}"
+
+    return full_info
 
 
 def main() -> None:
     """Main funciton for this package."""
-    url: str = "https://subslikescript.com/movie/Titanic-120338"
+    url: str = "https://subslikescript.com/movie/Taz_Quest_for_Burger-27469256"
 
     print()  # \n
     print(f"URL: {url}")
-    print(f"Movie title: {get_movie_title(url)}")
+    print(f"Movie title: {get_movie_info(url)}")
 
 
 if __name__ == "__main__":
