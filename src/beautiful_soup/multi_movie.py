@@ -25,7 +25,7 @@ def get_multi_movie_info(root: str) -> str:
         root = root[:-1]
 
     # --------------------------------------------------------
-    # Extracting likns to movies.
+    # Extracting links to movies.
     # --------------------------------------------------------
     total_info: str = ""
     all_movies_path: str = f"{root}/movies"
