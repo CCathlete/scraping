@@ -1,0 +1,24 @@
+{
+    "MD013": false,
+    "no-duplicate-heading": {
+        "siblings_only": true
+    },
+    "MD033": {
+        "allowed_elements": [
+            "nobr",
+            "sup",
+            "font",
+            "a",
+            "br",
+            "h1",
+            "h2",
+            "h3",
+            "h4",
+            "h5",
+            "h6",
+            "span",
+            "list",
+            "li"
+        ]
+    }
+}
