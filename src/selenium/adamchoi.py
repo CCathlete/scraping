@@ -75,13 +75,18 @@ def get_all_matches(country: str) -> pd.DataFrame:
     # After selecting the country, the HTML will contain
     # a table with the matches, where each table row is a
     # match.
-    table_rows: list[WebElement] = driver.find_elements(
-        by=By.TAG_NAME,
-        value="tr",
-    )
-    # TODO: Add a constraint for selecting only rows with more
-    # than 1 column (some rows are irrelevant and need to be
-    # screened out).
+    table_rows: list[WebElement] = [
+        row
+        for row in driver.find_elements(by=By.TAG_NAME, value="tr")
+        if len(
+            row.find_elements(
+                by=By.TAG_NAME,
+                value="td",
+            )
+        )
+        > 2
+    ]  # Selecting only rows with more # than 1 column
+    # (some rows are irrelevant and need to be screened out).
 
     column_names: list[str] = [
         "date",
