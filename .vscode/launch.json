@@ -5,10 +5,18 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python Debugger: Module",
+            "name": "main - selenium",
             "type": "debugpy",
             "request": "launch",
-            "module": "src.run.main"
-        }
+            "module": "src.run.main_selenium",
+            "cwd": "${workspaceFolder}",
+        },
+        {
+            "name": "main - bs4",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "src.run.main_bs4",
+            "cwd": "${workspaceFolder}",
+        },
     ]
 }

@@ -7,10 +7,15 @@ from typing import Union
 import os
 import time
 import pandas as pd
-from selenium import webdriver
-from selenium.webdriver.remote.webelement import WebElement
-from selenium.webdriver.support.ui import Select
-from selenium.webdriver.common.by import By
+from src.imports.selenium_imports import (
+    webdriver,
+    WebElement,
+    Select,
+    WebDriverWait,
+    EC,
+    By,
+    TimeoutException,
+)
 
 
 def get_all_matches(country: str) -> pd.DataFrame:
@@ -29,18 +34,25 @@ def get_all_matches(country: str) -> pd.DataFrame:
         raise ValueError("Environment variable CHROMEDRIVER_EXE_PATH is not set.")
 
     # Defining a driver object.
-    driver: webdriver.Chrome = webdriver.Chrome(
-        driver_path,
-    )
+    driver: webdriver.Chrome = webdriver.Chrome()
 
     # Opening the website with Chrome (GET request).
     driver.get(url_details)
+
+    # Waiting for the cookie popup and clicking Accept.
+    try:
+        cookie_button = WebDriverWait(driver, 5).until(
+            EC.element_to_be_clickable((By.XPATH, "//button[text()='Accept']"))
+        )
+        cookie_button.click()
+    except TimeoutException:
+        print("No cookie popup found.")
 
     # Defining a button object for the "All matches" button
     # css class.
     all_matches_button: WebElement = driver.find_element(
         by=By.XPATH,
-        value=r"//label[@analytics-event='All matches]",
+        value=r"//label[@analytics-event='All matches']",
     )
     all_matches_button.click()
 
