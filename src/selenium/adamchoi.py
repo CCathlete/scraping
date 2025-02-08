@@ -39,10 +39,10 @@ def get_all_matches(country: str) -> pd.DataFrame:
     # Opening the website with Chrome (GET request).
     driver.get(url_details)
 
-    # Waiting for the cookie popup and clicking Accept.
+    # Waiting for the cookie popup and clicking Consent.
     try:
-        cookie_button = WebDriverWait(driver, 5).until(
-            EC.element_to_be_clickable((By.XPATH, "//button[text()='Accept']"))
+        cookie_button = WebDriverWait(driver, 500).until(
+            EC.element_to_be_clickable((By.XPATH, "//button/p[text()='Consent']"))
         )
         cookie_button.click()
     except TimeoutException:
@@ -79,6 +79,9 @@ def get_all_matches(country: str) -> pd.DataFrame:
         by=By.TAG_NAME,
         value="tr",
     )
+    # TODO: Add a constraint for selecting only rows with more
+    # than 1 column (some rows are irrelevant and need to be
+    # screened out).
 
     column_names: list[str] = [
         "date",
@@ -100,22 +103,23 @@ def get_all_matches(country: str) -> pd.DataFrame:
                 value="./td[1]",
             ).text,
         )
+        # td[2] is just an icon so we skip it.
         data["home_team"].append(
-            row.find_element(
-                by=By.XPATH,
-                value="./td[2]",
-            ).text,
-        )
-        data["score"].append(
             row.find_element(
                 by=By.XPATH,
                 value="./td[3]",
             ).text,
         )
-        data["away_team"].append(
+        data["score"].append(
             row.find_element(
                 by=By.XPATH,
                 value="./td[4]",
+            ).text,
+        )
+        data["away_team"].append(
+            row.find_element(
+                by=By.XPATH,
+                value="./td[5]",
             ).text,
         )
 
