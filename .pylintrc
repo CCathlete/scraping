@@ -1,2 +1,2 @@
 [MASTER]
-ignore=references
+ignore=references/*

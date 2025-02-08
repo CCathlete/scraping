@@ -47,6 +47,9 @@ def get_all_matches(country: str) -> pd.DataFrame:
         cookie_button.click()
     except TimeoutException:
         print("No cookie popup found.")
+        # Closing the browser.
+        driver.quit()
+        return results
 
     # Defining a button object for the "All matches" button
     # css class.
