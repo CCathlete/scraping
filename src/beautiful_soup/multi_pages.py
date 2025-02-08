@@ -12,7 +12,7 @@ from bs4.element import (
 )
 import requests
 from typing_extensions import TypeAlias
-from src.beautiful_soup.one_movie import get_movie_info
+from src.beautiful_soup.multi_movie import get_multi_movie_info
 
 # Helpers.
 UpToOneElement: TypeAlias = Union[Tag, PageElement, None]
@@ -22,8 +22,13 @@ UpToOneElement: TypeAlias = Union[Tag, PageElement, None]
 def get_from_multi_pages(letter: str) -> str:
     """Gets root URL and a letter and returns the info of all movies starting with this letter."""
 
+    # We split the url to multiple parts to first get the list
+    # of link to movies and then handle a get request for each
+    # movie.
     root: str = "https://subslikescript.com"
-    url: str = f"{root}/movies_letter-{letter}"
+    movie_suffix: str = f"movies_letter-{letter}"
+    # The complete url for all movies starting withe the given letter.
+    url: str = f"{root}/{movie_suffix}"
 
     response: requests.Response = requests.get(
         url,
@@ -55,8 +60,13 @@ def get_from_multi_pages(letter: str) -> str:
     first_page: int = 1  # pages[0] is a "previous" button.
 
     # Extracting info of multiple movies from each page.
-    # We want to include the last page so stop condition is last_page + 1.
+    # We want to include the last page so stop condition is
+    # last_page + 1.
+    total_info: str = ""
     for page in range(first_page, last_page + 1):
-        
+        page_suffix: str = f"{movie_suffix}?page={page}"
+        total_info += (
+            f"\n\n\nPage: {page}" + f"{get_multi_movie_info(root, page_suffix)}"
+        )
 
-    return ""
+    return total_info

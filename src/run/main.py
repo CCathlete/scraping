@@ -5,8 +5,18 @@ Entry point to the program.
 import src.beautiful_soup as my_bs
 
 
+def one_movie() -> None:
+    """Main funciton for multiple pages extraction."""
+    root: str = "https://subslikescript.com/movies"
+
+    print()  # \n
+    print(f"Root URL: {root}")
+    print(f"Movie title: {my_bs.get_movie_info(root)}")
+
+
 def multi_movie() -> None:
-    """Main funciton for this package."""
+    """Main funciton for single page, multiple movies
+    extraction."""
     root: str = "https://subslikescript.com"
     movies_list_suffix: str = "movies"
 
@@ -16,24 +26,14 @@ def multi_movie() -> None:
 
 
 def multi_pages() -> None:
-    """Main funciton for this package."""
-    root: str = "https://subslikescript.com/movies"
-
+    """Main funciton for one movie extraction."""
+    letter: str = "X"
     print()  # \n
-    print(f"Root URL: {root}")
-    print(f"Movie title: {my_bs.get_from_multi_pages(root)}")
-
-
-def one_movie() -> None:
-    """Main funciton for this package."""
-    url: str = "https://subslikescript.com/movie/Taz_Quest_for_Burger-27469256"
-
-    print()  # \n
-    print(f"URL: {url}")
-    print(f"Movie title: {my_bs.get_movie_info(url)}")
+    print(f"Letter: {letter}")
+    print(f"Movie title: {my_bs.get_from_multi_pages(letter)}")
 
 
 if __name__ == "__main__":
-    # multi_pages()
-    multi_movie()
+    multi_pages()
+    # multi_movie()
     # one_movie()
