@@ -8,19 +8,20 @@ import src.beautiful_soup as my_bs
 def multi_movie() -> None:
     """Main funciton for this package."""
     root: str = "https://subslikescript.com"
+    movies_list_suffix: str = "movies"
 
     print()  # \n
     print(f"Root URL: {root}")
-    print(f"Movie title: {my_bs.get_multi_movie_info(root)}")
+    print(f"Movie title: {my_bs.get_multi_movie_info(root, movies_list_suffix)}")
 
 
 def multi_pages() -> None:
     """Main funciton for this package."""
-    root: str = "https://subslikescript.com"
+    root: str = "https://subslikescript.com/movies"
 
     print()  # \n
     print(f"Root URL: {root}")
-    print(f"Movie title: {my_bs.get_multi_movie_info(root)}")
+    print(f"Movie title: {my_bs.get_from_multi_pages(root)}")
 
 
 def one_movie() -> None:
@@ -33,6 +34,6 @@ def one_movie() -> None:
 
 
 if __name__ == "__main__":
-    multi_pages()
-    # multi_movie()
+    # multi_pages()
+    multi_movie()
     # one_movie()

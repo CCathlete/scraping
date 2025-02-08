@@ -17,18 +17,23 @@ UpToOneElement: TypeAlias = Union[Tag, PageElement, None]
 
 
 # Domain.
-def get_multi_movie_info(root: str) -> str:
+def get_multi_movie_info(root: str, movies_list_suffix: str) -> str:
     """Gets the root path of the movie website and extracts info of first 4 movies."""
-    if root == "" or root is None:
+    empty_root: bool = root == "" or root is None
+    empty_movies_suffix: bool = movies_list_suffix == "" or movies_list_suffix is None
+
+    if empty_root or empty_movies_suffix:
         return ""
     if root.endswith("/"):
         root = root[:-1]
+    if movies_list_suffix.endswith("/"):
+        movies_list_suffix = movies_list_suffix[:-1]
 
     # --------------------------------------------------------
     # Extracting links to movies.
     # --------------------------------------------------------
     total_info: str = ""
-    all_movies_path: str = f"{root}/movies"
+    all_movies_path: str = f"{root}/{movies_list_suffix}"
     response: requests.Response = requests.get(
         all_movies_path,
         timeout=10,

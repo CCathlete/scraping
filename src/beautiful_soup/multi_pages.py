@@ -52,5 +52,11 @@ def get_from_multi_pages(letter: str) -> str:
     # Pages contain HTML Tag elements so we need to extract
     # the text using the Tag.text method.
     last_page: int = int(pages[-2].text)
+    first_page: int = 1  # pages[0] is a "previous" button.
+
+    # Extracting info of multiple movies from each page.
+    # We want to include the last page so stop condition is last_page + 1.
+    for page in range(first_page, last_page + 1):
+        
 
     return ""
