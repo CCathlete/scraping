@@ -2,6 +2,8 @@
 Building the spider.
 """
 
+from typing import Type
+import pandas as pd
 from src.imports.selenium_imports import (
     webdriver,
     Driver,
@@ -10,14 +12,12 @@ from src.imports.selenium_imports import (
     EC,
     WebDriverWait as wait,
 )
-import pandas as pd
-from typing import Union, Type
 
-AUDIBLE_ROOT: str = "https://www.audible.com"
+AUDIBLE_SEARCH_ROOT: str = "https://www.audible.com/search"
 
 
 def get_ebooks(
-    url: str = AUDIBLE_ROOT,
+    url: str = AUDIBLE_SEARCH_ROOT,
     driver_class: Type[Driver] = webdriver.Chrome,
 ) -> pd.DataFrame:
     """Gets eboks info from audible using Selenium."""
