@@ -25,7 +25,7 @@ def get_ebooks(
     wrong_type_url: bool = not isinstance(url, str)
     driver_is_not_a_class: bool = not isinstance(driver_class, type)
     wrong_type_driver: bool = (
-        type(driver_class) != Type[Driver]  # pylint: disable=unidiomatic-typecheck
+        driver_class is Driver  # pylint: disable=unidiomatic-typecheck
     )
     empty_url: bool = not url or url == ""
 
