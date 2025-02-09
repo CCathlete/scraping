@@ -8,14 +8,14 @@
             "name": "main - selenium",
             "type": "debugpy",
             "request": "launch",
-            "module": "src.run.main_selenium",
+            "module": "src.main.selenium",
             "cwd": "${workspaceFolder}",
         },
         {
             "name": "main - bs4",
             "type": "debugpy",
             "request": "launch",
-            "module": "src.run.main_bs4",
+            "module": "src.main.bs4",
             "cwd": "${workspaceFolder}",
         },
     ]

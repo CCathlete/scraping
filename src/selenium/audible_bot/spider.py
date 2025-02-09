@@ -34,15 +34,15 @@ def get_ebooks(
 
     # Initialisation.
     result: pd.DataFrame = pd.DataFrame({})
-    data: dict[str, list[str]] = {
-        "title": [],
-        "sub_title": [],
-        "author": [],
-        "narrator": [],
-        "series": [],
-        "length": [],
-        "release_date": [],
-        "language": [],
+    data: dict[tuple[str, str], list[str]] = {
+        ("title", ".//h3[contains(@class, 'bc-heading')]"): [],
+        ("sub_title", ".//li[contains(@class, 'subtitle')]"): [],
+        ("author", ".//li[contains(@class, 'authorLabel')]"): [],
+        ("narrator", ".//li[contains(@class, 'narratorLabel')]"): [],
+        ("series", ".//li[contains(@class, 'seriesLabel')]"): [],
+        ("length", ".//li[contains(@class, 'runtimeLabel')]"): [],
+        ("release_date", ".//li[contains(@class, 'releaseDateLabel')]"): [],
+        ("language", ".//li[contains(@class, 'languageLabel')]"): [],
     }
 
     # Calling the constructor.
@@ -74,6 +74,24 @@ def get_ebooks(
         raise ValueError("List of books not found.")
 
     # Extracting data from each book.
+    for product in products:
+        # The dict keys are tuples, iterating over dict is iterating over the keys.
+        for field_name, xpath in data:
+            data[field_name, xpath].append(
+                product.find_element(
+                    by=By.XPATH,
+                    value=xpath,
+                    # Converting to text when storing.
+                ).text,
+            )
 
-    driver.close()
+    # Creating a DataFrame from field_name and the inner value.
+    result = pd.DataFrame(
+        {field_name: data[field_name, xpath] for field_name, xpath in data}
+    )
+
+    # Dumping the DF into a csv.
+    result.to_csv("audoble_books.csv", index=False)
+
+    driver.quit()
     return result
