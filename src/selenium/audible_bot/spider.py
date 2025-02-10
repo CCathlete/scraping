@@ -2,25 +2,17 @@
 Building the spider.
 """
 
-from typing import Type
-import pandas as pd
-from src.imports.selenium_imports import (
-    webdriver,
-    Driver,
-    By,
-    WebElement,
-    EC,
-    WebDriverWait as wait,
-    NoSuchElementException,
-    NoSuchAttributeException,
-)
+from src.imports.selenium_imports import *
+from src.imports.typing import *
+from src.imports.data import *
 
 AUDIBLE_SEARCH_ROOT: str = "https://www.audible.com/search"
 
 
 def get_ebooks(
+    driver_options: Optional[list[str]] = None,
     url: str = AUDIBLE_SEARCH_ROOT,
-    driver_class: Type[Driver] = webdriver.Chrome,
+    driver_class: type[Driver] = webdriver.Chrome,
 ) -> pd.DataFrame:
     """Gets eboks info from audible using Selenium."""
     # Input validation.
@@ -46,9 +38,20 @@ def get_ebooks(
         ("release_date", ".//li[contains(@class, 'releaseDateLabel')]"): [],
         ("language", ".//li[contains(@class, 'languageLabel')]"): [],
     }
-
+    options: DriverOptions = init_driver_options(driver_class=driver_class)
+    # TODO: Check if in place is possible.
+    options = set_options(driver_options, options)
     # Calling the constructor.
-    driver: Driver = driver_class()
+    driver: Driver  # Declaration.
+    if driver_class is webdriver.Chrome:
+        driver = webdriver.Chrome(options=options)
+    elif driver_class is webdriver.Firefox:
+        driver = webdriver.Firefox(options=options)
+    elif driver_class is webdriver.Edge():
+        # Looks like options are not supported.
+        driver = webdriver.Edge()
+    elif driver_class is webdriver.Ie:
+        driver = webdriver.Ie(options=options)
     driver.get(url)
     driver.maximize_window()
 

@@ -11,7 +11,9 @@ from typing import (
     Union,
     Optional,
     Iterator,
+    get_args,
 )
+from typing_extensions import TypeAlias
 
 __all__ = [
     "TypeVar",
@@ -22,4 +24,5 @@ __all__ = [
     "Union",
     "Optional",
     "Iterator",
+    "get_args",
 ]
