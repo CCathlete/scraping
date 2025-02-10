@@ -2,4 +2,5 @@
 Init file for the imports module.
 """
 
-from . import selenium_imports
+# Brings selenium_imports __all__ to the imports module.
+# from .selenium_imports import *
