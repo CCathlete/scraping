@@ -41,6 +41,9 @@ def get_ebooks(
     options: DriverOptions = init_driver_options(driver_class=driver_class)
     # TODO: Check if in place is possible.
     options = set_options(driver_options, options)
+
+    ################################################
+    # TODO: Might need refactoring.
     # Calling the constructor.
     driver: Driver  # Declaration.
     if driver_class is webdriver.Chrome:
@@ -52,6 +55,8 @@ def get_ebooks(
         driver = webdriver.Edge()
     elif driver_class is webdriver.Ie:
         driver = webdriver.Ie(options=options)
+    ################################################
+
     driver.get(url)
     driver.maximize_window()
 

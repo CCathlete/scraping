@@ -24,6 +24,18 @@ def spider() -> None:
         print(err)
 
 
+def spider_headless() -> None:
+    """Entry point for spider creation in headless mode."""
+    print()  # \n
+    try:
+        print(
+            f"List of ebooks from Audible (headless mode): {my_selenium.get_ebooks_headless()}"
+        )
+    except (ValueError, TimeoutException) as err:
+        print(err)
+
+
 if __name__ == "__main__":
     # country_matches()
-    spider()
+    # spider()
+    spider_headless()

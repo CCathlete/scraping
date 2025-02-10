@@ -11,7 +11,7 @@ from src.imports.selenium_imports import (
     webdriver,
     WebElement,
     Select,
-    WebDriverWait,
+    wait,
     EC,
     By,
     TimeoutException,
@@ -41,7 +41,7 @@ def get_all_matches(country: str) -> pd.DataFrame:
 
     # Waiting for the cookie popup and clicking Consent.
     try:
-        cookie_button = WebDriverWait(driver, 500).until(
+        cookie_button = wait(driver, 500).until(
             EC.element_to_be_clickable((By.XPATH, "//button/p[text()='Consent']"))
         )
         cookie_button.click()

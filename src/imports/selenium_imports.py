@@ -52,7 +52,9 @@ def set_options(
         return initialised_opts
 
     for opt in to_set:
-        if hasattr(initialised_opts, opt):
+        if opt == "headless" and hasattr(initialised_opts, "add_argument"):
+            initialised_opts.add_argument("--headless")
+        elif hasattr(initialised_opts, opt):
             setattr(initialised_opts, opt, True)
 
     return initialised_opts
