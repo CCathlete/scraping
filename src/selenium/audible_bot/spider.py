@@ -11,7 +11,6 @@ from src.imports.selenium_imports import (
     WebElement,
     EC,
     WebDriverWait as wait,
-    TimeoutException,
     NoSuchElementException,
     NoSuchAttributeException,
 )
@@ -53,15 +52,12 @@ def get_ebooks(
     driver.get(url)
     driver.maximize_window()
 
-    try:
-        # Locating the container that has the list of books.
-        container: WebElement = wait(driver, 10).until(
-            EC.presence_of_element_located(
-                (By.CLASS_NAME, "adbl-impression-container"),
-            ),
-        )
-    except TimeoutException:
-        raise TimeoutException("Container with books not found.")
+    # Locating the container that has the list of books.
+    container: WebElement = wait(driver, 10).until(
+        EC.presence_of_element_located(
+            (By.CLASS_NAME, "adbl-impression-container"),
+        ),
+    )
     if not container:
         raise ValueError("Container not found.")
 
