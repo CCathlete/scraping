@@ -9,7 +9,11 @@ from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.ui import Select, WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
-from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import (
+    TimeoutException,
+    NoSuchAttributeException,
+    NoSuchElementException,
+)
 
 Driver: TypeAlias = Union[
     webdriver.Chrome,
@@ -50,4 +54,6 @@ __all__ = [
     "EC",
     "By",
     "TimeoutException",
+    "NoSuchAttributeException",
+    "NoSuchElementException",
 ]

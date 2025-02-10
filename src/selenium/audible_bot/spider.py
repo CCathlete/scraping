@@ -11,6 +11,9 @@ from src.imports.selenium_imports import (
     WebElement,
     EC,
     WebDriverWait as wait,
+    TimeoutException,
+    NoSuchElementException,
+    NoSuchAttributeException,
 )
 
 AUDIBLE_SEARCH_ROOT: str = "https://www.audible.com/search"
@@ -50,25 +53,29 @@ def get_ebooks(
     driver.get(url)
     driver.maximize_window()
 
-    # Locating the container that has the list of books.
-    container: WebElement = wait(driver, 10).until(
-        EC.presence_of_element_located(
-            (By.CLASS_NAME, "adbl-impression-container"),
-        ),
-    )
+    try:
+        # Locating the container that has the list of books.
+        container: WebElement = wait(driver, 10).until(
+            EC.presence_of_element_located(
+                (By.CLASS_NAME, "adbl-impression-container"),
+            ),
+        )
+    except TimeoutException:
+        raise TimeoutException("Container with books not found.")
     if not container:
         raise ValueError("Container not found.")
 
+    book_rel_xpath: str = r".//li[contains(@class, 'bc-list-item')]"
     # Getting all list items in the container.
     # We screen for irrelevant elementc.
     products: list[WebElement] = [
         product
         for product in container.find_elements(
             by=By.XPATH,
-            value="./li",
+            value=book_rel_xpath,
         )
         if isinstance(product, WebElement)
-        and len(product.find_elements(by=By.XPATH, value="./li")) > 5
+        and len(product.find_elements(by=By.XPATH, value=book_rel_xpath)) > 5
     ]
     if not products:
         raise ValueError("List of books not found.")
@@ -77,13 +84,16 @@ def get_ebooks(
     for product in products:
         # The dict keys are tuples, iterating over dict is iterating over the keys.
         for field_name, xpath in data:
-            data[field_name, xpath].append(
-                product.find_element(
-                    by=By.XPATH,
-                    value=xpath,
-                    # Converting to text when storing.
-                ).text,
-            )
+            try:
+                data[field_name, xpath].append(
+                    product.find_element(
+                        by=By.XPATH,
+                        value=xpath,
+                        # Converting to text when storing.
+                    ).text,
+                )
+            except (NoSuchAttributeException, NoSuchElementException):
+                data[field_name, xpath].append("")
 
     # Creating a DataFrame from field_name and the inner value.
     result = pd.DataFrame(
