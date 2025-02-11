@@ -2,4 +2,5 @@
     "pylint.args": [
         "--rcfile=../.pylintrc"
     ],
+    "mypy.configFile": "pyproject.toml",
 }
