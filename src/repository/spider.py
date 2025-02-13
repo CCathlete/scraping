@@ -26,8 +26,15 @@ class Skeleton(ABC):
     def scrape(
         self,
         url: str,
+        callback: Optional[Callable[[Data], None]] = None,
     ) -> Data:
-        """Scrapes data from a given URL."""
+        """Scrapes data from a given URL.
+
+        - If `callback` is provided, calls it with the scraped
+        data (for Scrapy).
+
+        - Otherwise, returns data directly (for Selenium).
+        """
         pass
 
     @abstractmethod
@@ -43,7 +50,7 @@ class Skeleton(ABC):
         self,
         data: Union[Output, Data],
         path: str,
-        extension: str = ".csv",
+        extension: SupportedOutput = SupportedOutput.CSV,
     ) -> None:
         """Gets data, a path to a parent folder and an
         extension and saves the data to a file.
