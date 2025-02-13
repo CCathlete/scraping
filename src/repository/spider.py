@@ -25,6 +25,29 @@ class Skeleton(ABC):
     @abstractmethod
     def scrape(
         self,
+        url: str,
     ) -> Data:
-        """_summary_"""
+        """Scrapes data from a given URL."""
+        pass
+
+    @abstractmethod
+    def process(
+        self,
+        data: Data,
+    ) -> Output:
+        """Processes the scraped data and returns the output."""
+        pass
+
+    @abstractmethod
+    def save_data(
+        self,
+        data: Union[Output, Data],
+        path: str,
+        extension: str = ".csv",
+    ) -> None:
+        """Gets data, a path to a parent folder and an
+        extension and saves the data to a file.
+
+        Raises an error is the writing had failed.
+        """
         pass
