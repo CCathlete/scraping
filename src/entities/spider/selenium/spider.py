@@ -3,7 +3,7 @@ Selenium based implementation of the spider.Skeleton
 interface.
 """
 
-from src.entities.spider.spider import Skeleton
+from src.entities.spider.interface import Skeleton
 
 
 class Spider(Skeleton):
