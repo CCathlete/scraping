@@ -4,13 +4,19 @@ Data related imports.
 
 from .typing import *
 import pandas as pd
+from enum import Enum
 
 Data: TypeAlias = Union[pd.DataFrame, pd.Series]
 Output: TypeAlias = Union[Data, None]
 
 
-class SupportedOutput:
+class SupportedOutput(str, Enum):
     """Constants for supported file extensions."""
+
+    # This class inherit from the str and enum meta classes,
+    # meaning that all attributes are instances of the class.
+    # i.e. SupportedOutput.CSV is an instance of
+    # SupportedOutput.
 
     XML = ".xml"
     CSV = ".csv"
