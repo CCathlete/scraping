@@ -45,7 +45,8 @@ def init_driver_options(driver_class: type[Driver]) -> DriverOptions:
 
 
 def set_options(
-    to_set: Optional[list[str]], initialised_opts: DriverOptions
+    to_set: Optional[list[str]],
+    initialised_opts: DriverOptions,
 ) -> DriverOptions:
     """Activates the options from to_ set in initialised_opts."""
     if to_set is None:

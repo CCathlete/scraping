@@ -18,35 +18,51 @@ class Spider(Skeleton):
     locators: list[Locator]
     root_url: str
     driver: Driver
-    driver_options: DriverOptions
+    options_to_set: list[str]
 
     def __init__(
         self,
         locators: list[Locator] = DEFAULT_LOCATORS,
         root_url: str = "https://www.google.com",
+        options_to_set: list[str] = ["headless"],
     ) -> None:
         self.locators = locators
         self.root_url = root_url
+        self.options_to_set = options_to_set
 
     def init_driver(
         self,
         driver_type: type[Driver] = webdriver.Chrome,
-    ) -> Driver:
+    ) -> Self:
         """Initialises the driver."""
-        self.driver = driver_type(options=self.driver_options)
-        return self.driver
+        options: DriverOptions = set_options(
+            self.options_to_set,
+            init_driver_options(driver_type),
+        )
+        ################################################
+        # TODO: Might need refactoring.
+        # Calling the constructor.
+        driver: Driver  # Declaration.
+        if driver_type is webdriver.Chrome:
+            self.driver = webdriver.Chrome(options=options)
+        elif driver_type is webdriver.Firefox:
+            self.driver = webdriver.Firefox(options=options)
+        elif driver_type is webdriver.Edge():
+            # Looks like options are not supported.
+            self.driver = webdriver.Edge()
+        elif driver_type is webdriver.Ie:
+            self.driver = webdriver.Ie(options=options)
+        ################################################
+
+        return self
 
     def scrape(
         self,
         url: str,
         callback: Optional[Callable[[Data], None]] = None,
     ) -> Data:
-        """Scrapes data from a given URL.
-
-        - If `callback` is provided, calls it with the scraped
-        data (for Scrapy).
-
-        - Otherwise, returns data directly (for Selenium).
+        """Scrapes data from a given URL and returns the data
+        directly.
         """
         return pd.DataFrame()
 
