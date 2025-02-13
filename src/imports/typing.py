@@ -13,7 +13,7 @@ from typing import (
     Iterator,
     get_args,
 )
-from typing_extensions import TypeAlias
+from typing_extensions import TypeAlias, Self
 
 __all__ = [
     "TypeVar",
@@ -26,4 +26,5 @@ __all__ = [
     "Iterator",
     "get_args",
     "TypeAlias",
+    "Self",
 ]
