@@ -3,9 +3,9 @@ A spider repository contract (interface).
 """
 
 from abc import ABC, abstractmethod
-from src.imports.data import *
-from src.imports.selenium_imports import Driver as SeleniumDriver
-from src.imports.typing import *
+from .imports.data import *
+from .imports.selenium_imports import Driver as SeleniumDriver
+from .imports.typing import *
 
 Driver: TypeAlias = Union[SeleniumDriver]
 
