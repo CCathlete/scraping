@@ -7,26 +7,23 @@ from ..interface import Skeleton
 from src.imports.selenium_imports import *
 from src.imports.data import *
 from src.imports.typing import *
-from src.entities.locator import Locator
-
-DEFAULT_LOCATORS: list[Locator] = [Locator()]
+from src.entities.container import Container
 
 
 class Spider(Skeleton):
     """A spider that uses Selenium to scrape data."""
 
-    locators: list[Locator]
     root_url: str
     driver: Driver
     options_to_set: list[str]
 
     def __init__(
         self,
-        locators: list[Locator] = DEFAULT_LOCATORS,
+        containers: list[Container] = [],
         root_url: str = "https://www.google.com",
         options_to_set: list[str] = ["headless"],
     ) -> None:
-        self.locators = locators
+        self.containers = containers
         self.root_url = root_url
         self.options_to_set = options_to_set
 
@@ -64,7 +61,15 @@ class Spider(Skeleton):
         """Scrapes data from a given URL and returns the data
         directly.
         """
-        return pd.DataFrame()
+
+        self.driver.get(url)
+
+        data: dict[str, list[str]] = {}
+
+        for container in self.containers:
+            container.extract(container, self.driver, data)
+
+        return pd.DataFrame(data)
 
     def process(
         self,
