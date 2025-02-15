@@ -34,6 +34,8 @@ def get_audiobooks(
         driver_type,
     )
 
+    book_rel_path: str = r".//li[contains(@class, 'bc-list-item')]"
+
     # Setting up the containers and locators for book
     # extraction.
     spider.set_container_tree(
@@ -52,8 +54,37 @@ def get_audiobooks(
         ).sub_containers_from_common_locator(
             common_locator=Locator(
                 l_type=By.XPATH,
-                value=r".//li[contains(@class, 'bc-list-item')]",
+                value=book_rel_path,
             ),
+            # Every sub container will have these sub locators
+            # to extract book data.
+            sub_locators=[
+                Locator(
+                    l_type=By.XPATH,
+                    value=rf"{val}",
+                    name=name,
+                )
+                for name, val in [
+                    ("title", ".//h3[contains(@class, 'bc-heading')]"),
+                    ("sub_title", ".//li[contains(@class, 'subtitle')]"),
+                    ("author", ".//li[contains(@class, 'authorLabel')]"),
+                    ("narrator", ".//li[contains(@class, 'narratorLabel')]"),
+                    ("series", ".//li[contains(@class, 'seriesLabel')]"),
+                    ("length", ".//li[contains(@class, 'runtimeLabel')]"),
+                    ("release_date", ".//li[contains(@class, 'releaseDateLabel')]"),
+                    ("language", ".//li[contains(@class, 'languageLabel')]"),
+                ]
+            ],
+            # All books have more than 5 fields and we want to
+            # filter out irrelevant elements.
+            condition=lambda elem: isinstance(elem, WebElement)
+            and len(
+                elem.find_elements(
+                    by=By.XPATH,
+                    value=book_rel_path,
+                )
+            )
+            > 4,
         ),
     )
 

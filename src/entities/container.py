@@ -5,7 +5,7 @@ A container is an HTML element that contains other elements.
 
 from .locator import Locator
 from src.imports.selenium_imports import WebElement, Driver
-from src.imports.typing import Union, Optional, Self
+from src.imports.typing import Union, Optional, Self, Callable
 
 
 class Container:
@@ -49,6 +49,8 @@ class Container:
     def sub_containers_from_elements(
         self,
         elements: list[WebElement] = [],
+        sub_locators: list[Locator] = [],
+        condition: Callable[[WebElement], bool] = lambda _: True,
     ) -> Self:
         """Sets sub containers from a list of web elements."""
         self.sub_containers = [
@@ -56,16 +58,19 @@ class Container:
                 name=f"{self.name}: {element.tag_name}",
                 parent_element=self.element,
                 element=element,
+                sub_locators=sub_locators,
             )
             for element in elements
+            if condition(element)
         ]
 
         return self
 
-    # TODO: Add condition and locators to add to each container.
     def sub_containers_from_common_locator(
         self,
         common_locator: Locator,
+        sub_locators: list[Locator] = [],
+        condition: Callable[[WebElement], bool] = lambda _: True,
     ) -> Self:
         """Sets sub containers from elements of a common
         locator."""
@@ -79,8 +84,10 @@ class Container:
                 name=f"{self.name}: {element.tag_name}",
                 parent_element=self.element,
                 element=element,
+                sub_locators=sub_locators,
             )
             for element in elements
+            if condition(element)
         ]
 
         return self
