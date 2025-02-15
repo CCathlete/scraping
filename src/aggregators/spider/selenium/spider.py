@@ -40,7 +40,7 @@ class Spider(Skeleton):
         ################################################
         # TODO: Might need refactoring.
         # Calling the constructor.
-        driver: Driver  # Declaration.
+        self.driver: Driver  # Declaration.
         if driver_type is webdriver.Chrome:
             self.driver = webdriver.Chrome(options=options)
         elif driver_type is webdriver.Firefox:
