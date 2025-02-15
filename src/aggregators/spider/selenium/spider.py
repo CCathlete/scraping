@@ -23,10 +23,10 @@ class Spider(Skeleton):
 
     def set_container_tree(
         self,
-        containers: list[Container] = [],
+        root: Optional[Container] = None,
     ) -> None:
         """Sets the container tree."""
-        self.containers = containers
+        self.tree_root = root
 
     def init_driver(
         self,
@@ -58,17 +58,19 @@ class Spider(Skeleton):
         self,
         url: str,
         callback: Optional[Callable[[Data], None]] = None,
-    ) -> Data:
+    ) -> Optional[Data]:
         """Scrapes data from a given URL and returns the data
         directly.
         """
+        if not self.tree_root:
+            print("No container tree set.")
+            return None
 
         self.driver.get(url)
 
         data: dict[str, list[str]] = {}
 
-        for container in self.containers:
-            container.extract(data)
+        self.tree_root.extract(data)
 
         return pd.DataFrame(data)
 

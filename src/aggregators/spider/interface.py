@@ -28,7 +28,7 @@ class Skeleton(ABC):
         self,
         url: str,
         callback: Optional[Callable[[Data], None]] = None,
-    ) -> Data:
+    ) -> Optional[Data]:
         """Scrapes data from a given URL.
 
         - If `callback` is provided, calls it with the scraped

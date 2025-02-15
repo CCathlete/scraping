@@ -37,19 +37,24 @@ def get_audiobooks(
     # Setting up the containers and locators for book
     # extraction.
     spider.set_container_tree(
-        containers=[
-            Container(
-                name="top level container",
-                # Container locator is not stored in the output.
-                locator=Locator(
-                    l_type=By.CLASS_NAME,
-                    value="abdl-impression-container",
-                    name="locator for top level container",
-                ),
-                parent_element=spider.driver,
-                sub_containers=[],
+        root=Container(
+            name="top level container",
+            # Container locator is not stored in the output.
+            locator=Locator(
+                l_type=By.CLASS_NAME,
+                value="abdl-impression-container",
+                name="locator for top level container",
             ),
-        ],
+            # Already initialised.
+            parent_element=spider.driver,
+            # After inisialising the tree root, we're setting
+            # its sub containers (in place).
+        ).sub_containers_from_common_locator(
+            common_locator=Locator(
+                l_type=By.XPATH,
+                value=r".//li[contains(@class, 'bc-list-item')]",
+            ),
+        ),
     )
 
     return None
