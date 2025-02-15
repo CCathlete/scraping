@@ -2,7 +2,7 @@
 Entry point to the program.
 """
 
-import src.selenium as my_selenium
+import src.domain.selenium as my_selenium
 from src.imports.selenium_imports import TimeoutException
 
 

@@ -12,7 +12,7 @@ from bs4.element import (
 )
 import requests
 from typing_extensions import TypeAlias
-from src.beautiful_soup.multi_movie import get_multi_movie_info
+from src.domain.beautiful_soup.multi_movie import get_multi_movie_info
 
 # Helpers.
 UpToOneElement: TypeAlias = Union[Tag, PageElement, None]
