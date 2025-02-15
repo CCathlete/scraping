@@ -2,7 +2,7 @@
 Entry point to the program.
 """
 
-import src.beautiful_soup as my_bs
+import src.domain.beautiful_soup as my_bs
 
 
 def one_movie() -> None:

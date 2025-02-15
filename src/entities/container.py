@@ -17,11 +17,16 @@ class Container:
         self,
         name: str,
         locator: Locator,
+        parent_element: Union[WebElement, Driver],
         sub_containers: list["Container"] = [],
         sub_locators: list[Locator] = [],
     ) -> None:
         self.name = name
         self.locator = locator
+        self.element: WebElement = parent_element.find_element(
+            by=locator.type,
+            value=locator.value,
+        )
         self.sub_containers = sub_containers
         self.sub_locators = sub_locators
 
