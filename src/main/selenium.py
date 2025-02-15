@@ -7,6 +7,7 @@ from src.imports.selenium_imports import TimeoutException, webdriver
 
 AUDIBLE_SEARCH_ROOT: str = "https://www.audible.com/search"
 
+
 def country_matches() -> None:
     """Main funciton for a country's football matches data
     extraction."""
@@ -40,10 +41,9 @@ def ebooks_ddd() -> None:
     """Entry point for scraping using DDD architecture."""
     print()  # \n
     try:
-        print(f"List of ebooks from Audible: {my_selenium.get_audiobooks(
-            url=AUDIBLE_SEARCH_ROOT,
-            driver_type=webdriver.Chrome
-            )}")
+        print(
+            f"List of ebooks from Audible: {my_selenium.get_audiobooks( url=AUDIBLE_SEARCH_ROOT, driver_type=webdriver.Chrome)}"
+        )
     except (ValueError, TimeoutException) as err:
         print(err)
 
