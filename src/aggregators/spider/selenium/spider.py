@@ -34,8 +34,8 @@ class Spider(Skeleton):
     ) -> Self:
         """Initialises the driver."""
         options: DriverOptions = set_options(
-            self.options_to_set,
-            init_driver_options(driver_type),
+            to_set=self.options_to_set,
+            initialised_opts=init_driver_options(driver_type),
         )
         ################################################
         # TODO: Might need refactoring.
