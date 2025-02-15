@@ -13,23 +13,24 @@ from src.entities.container import Container
 class Spider(Skeleton):
     """A spider that uses Selenium to scrape data."""
 
-    root_url: str
-    driver: Driver
-    options_to_set: list[str]
-
     def __init__(
         self,
-        containers: list[Container] = [],
         root_url: str = "https://www.google.com",
         options_to_set: list[str] = ["headless"],
     ) -> None:
-        self.containers = containers
         self.root_url = root_url
         self.options_to_set = options_to_set
 
+    def set_container_tree(
+        self,
+        containers: list[Container] = [],
+    ) -> None:
+        """Sets the container tree."""
+        self.containers = containers
+
     def init_driver(
         self,
-        driver_type: type[Driver] = webdriver.Chrome,
+        driver_type: type[Driver],
     ) -> Self:
         """Initialises the driver."""
         options: DriverOptions = set_options(
@@ -67,7 +68,7 @@ class Spider(Skeleton):
         data: dict[str, list[str]] = {}
 
         for container in self.containers:
-            container.extract(container, self.driver, data)
+            container.extract(data)
 
         return pd.DataFrame(data)
 

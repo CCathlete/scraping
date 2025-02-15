@@ -32,8 +32,6 @@ class Container:
 
     def extract(
         self,
-        container: "Container",
-        parent_element: Union[WebElement, Driver],
         data: dict[str, list[str]] = {},
     ) -> dict[str, list[str]]:
         """
@@ -43,14 +41,11 @@ class Container:
         """
 
         # The element of the container itself.
-        element: WebElement = parent_element.find_element(
-            container.locator.type,
-            container.locator.value,
-        )
+        element: WebElement = self.element
 
         # Iterating over all direct sub elements that are not
         # containers themselves.
-        for locator in container.sub_locators:
+        for locator in self.sub_locators:
             elements: list[WebElement] = element.find_elements(
                 locator.type,
                 locator.value,
@@ -65,11 +60,9 @@ class Container:
 
         # Now that we've extracted all the data from this
         # level, we move to the next level of sub containers.
-        for sub_container in container.sub_containers:
-            self.extract(
-                sub_container,
-                element,
-                data,
-            )
+        # All sub containers are initialised so they contain
+        # element and parent_element fields.
+        for sub_container in self.sub_containers:
+            sub_container.extract(data)
 
         return data

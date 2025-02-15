@@ -18,6 +18,7 @@ class Skeleton(ABC):
     @abstractmethod
     def init_driver(
         self,
+        driver_type: type[Driver],
     ) -> Self:
         """Initialises the driver."""
         pass
