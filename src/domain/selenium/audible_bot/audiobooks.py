@@ -30,7 +30,7 @@ def get_audiobooks(
     spider: Spider = Spider(
         root_url=url,
         # options_to_set=["headless"],
-        options_to_set=[],
+        options_to_set=options_to_set,
     ).init_driver(
         driver_type,
     )
