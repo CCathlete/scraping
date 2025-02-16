@@ -70,8 +70,6 @@ class Spider(Skeleton):
             print("No container tree set.")
             return None
 
-        self.driver.get(url)
-
         data: dict[str, list[str]] = {}
 
         self.tree_root.extract(data)
