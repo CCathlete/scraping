@@ -54,6 +54,8 @@ class Spider(Skeleton):
             self.driver = webdriver.Ie(options=options)
         ################################################
 
+        self.driver.get(self.root_url)
+
         return self
 
     def scrape(
