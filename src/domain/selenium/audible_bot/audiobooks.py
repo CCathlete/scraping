@@ -13,6 +13,7 @@ from src.imports.selenium_imports import *
 def get_audiobooks(
     url: str,
     driver_type: type[Driver],
+    options_to_set: list[str] = [],
 ) -> Output:
     """_summary_
 
