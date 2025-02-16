@@ -4,7 +4,7 @@ A container is an HTML element that contains other elements.
 """
 
 from .locator import Locator
-from src.imports.selenium_imports import WebElement, Driver, wait, EC
+from src.imports.selenium_imports import *
 from src.imports.typing import Union, Optional, Self, Callable
 
 
@@ -109,19 +109,21 @@ class Container:
         # Iterating over all direct sub elements that are not
         # containers themselves.
         for locator in self.sub_locators:
+            if locator.name not in data:
+                data[locator.name] = []
+
             elements: list[WebElement] = element.find_elements(
                 locator.type,
                 locator.value,
             )
             if elements:
-                if locator.name not in data:
-                    data[locator.name] = []
                 data[locator.name] += [element.text for element in elements]
+
             else:
                 # We still want to add something so we won't
                 # mess up the index order between cells in
                 # different fields in data.
-                data[locator.name] = [""]
+                data[locator.name] += [""]
 
         # Now that we've extracted all the data from this
         # level, we move to the next level of sub containers.
