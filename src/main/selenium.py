@@ -42,11 +42,7 @@ def ebooks_ddd() -> None:
     print()  # \n
     try:
         print(
-            f"List of ebooks from Audible: {my_selenium.get_audiobooks(
-                url=AUDIBLE_SEARCH_ROOT,
-                driver_type=webdriver.Chrome,
-                options_to_set=["headless"],
-                )}"
+            f"List of ebooks from Audible: {my_selenium.get_audiobooks(url=AUDIBLE_SEARCH_ROOT, driver_type=webdriver.Chrome, options_to_set=["headless"])}"
         )
     except (ValueError, TimeoutException) as err:
         print(err)
