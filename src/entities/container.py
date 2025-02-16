@@ -4,7 +4,7 @@ A container is an HTML element that contains other elements.
 """
 
 from .locator import Locator
-from src.imports.selenium_imports import WebElement, Driver
+from src.imports.selenium_imports import WebElement, Driver, wait, EC
 from src.imports.typing import Union, Optional, Self, Callable
 
 
@@ -28,9 +28,10 @@ class Container:
 
         if locator and not element:
             self.locator = locator
-            self.element: WebElement = parent_element.find_element(
-                by=locator.type,
-                value=locator.value,
+            self.element: WebElement = wait(parent_element, 10).until(
+                EC.presence_of_element_located(
+                    (locator.type, locator.value),
+                ),
             )
         elif element and not locator:
             self.element = element

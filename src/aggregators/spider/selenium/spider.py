@@ -74,6 +74,7 @@ class Spider(Skeleton):
 
         self.tree_root.extract(data)
 
+        self.driver.quit()
         return pd.DataFrame(data)
 
     def process(
