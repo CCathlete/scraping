@@ -45,7 +45,7 @@ def get_audiobooks(
             # Container locator is not stored in the output.
             locator=Locator(
                 l_type=By.CLASS_NAME,
-                value="abdl-impression-container",
+                value="adbl-impression-container",
                 name="locator for top level container",
             ),
             # Already initialised.
