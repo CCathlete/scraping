@@ -96,3 +96,18 @@ class Spider(Skeleton):
         Raises an error is the writing had failed.
         """
         pass
+
+    # TODO: Implement this.
+    def paginate(self) -> None:
+        """
+        Handles pagination based on the provided strategy:
+        - Clicks a 'Next' button if `next_button_locator` is provided.
+        - Navigates using URL pattern if `next_page_url_fn` is provided.
+        - Scrolls down for infinite scrolling if `scroll` is True.
+
+        Args:
+            next_button_locator (Locator, optional): Locator for the "Next" button.
+            next_page_url_fn (Callable[[int], str], optional): Function to generate paginated URLs.
+            scroll (bool, optional): Enables infinite scrolling.
+            max_pages (int): Maximum number of pages to prevent infinite loops.
+        """

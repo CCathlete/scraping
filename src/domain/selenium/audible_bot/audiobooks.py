@@ -15,13 +15,9 @@ def get_audiobooks(
     driver_type: type[Driver],
     options_to_set: list[str] = [],
 ) -> Output:
-    """_summary_
-
-    Args:
-        url (str): _description_
-
-    Returns:
-        Output: _description_
+    """
+    Gets base url, driver type and options to set and returns
+    a pandas object with all the audiobooks.
     """
     if not isinstance(url, str):
         return None
