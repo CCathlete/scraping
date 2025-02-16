@@ -38,7 +38,7 @@ def get_audiobooks(
 
     # Setting up the containers and locators for book
     # extraction.
-    spider.set_container_tree(
+    return spider.set_container_tree(
         root=Container(
             name="top level container",
             # Container locator is not stored in the output.
@@ -86,6 +86,4 @@ def get_audiobooks(
             )
             > 4,
         ),
-    )
-
-    return None
+    ).scrape(url=url)

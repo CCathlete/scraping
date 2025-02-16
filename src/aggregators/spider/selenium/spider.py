@@ -24,9 +24,11 @@ class Spider(Skeleton):
     def set_container_tree(
         self,
         root: Optional[Container] = None,
-    ) -> None:
+    ) -> Self:
         """Sets the container tree."""
         self.tree_root = root
+
+        return self
 
     def init_driver(
         self,
