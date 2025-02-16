@@ -114,6 +114,8 @@ class Container:
                 locator.value,
             )
             if elements:
+                if locator.name not in data:
+                    data[locator.name] = []
                 data[locator.name] += [element.text for element in elements]
             else:
                 # We still want to add something so we won't
