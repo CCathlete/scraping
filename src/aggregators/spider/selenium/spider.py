@@ -29,6 +29,7 @@ class Spider(Skeleton):
         next_page_url_fn: Optional[Callable[[int], str]] = None
         scroll: bool = False
         max_pages: int = 100
+        curr_page: int = 1
 
     def __init__(
         self,
@@ -87,18 +88,19 @@ class Spider(Skeleton):
     def scrape(
         self,
         url: str,
-        callback: Optional[Callable[[Data], None]] = None,
+        override_pag_opts: Optional[PaginationOptions] = None,
     ) -> Optional[Data]:
         """Scrapes data from a given URL and returns the data
         directly.
         """
         if not self.tree_root:
-            print("No container tree set.")
+            print("No container tree sets.")
             return None
 
         data: dict[str, list[str]] = {}
 
-        self.tree_root.extract(data)
+        while self.paginate(override_pag_opts):
+            self.tree_rot.extract(data)
 
         self.driver.quit()
         return pd.DataFrame(data)
@@ -136,7 +138,7 @@ class Spider(Skeleton):
     def paginate(
         self,
         override_pag_opts: Optional[PaginationOptions] = None,
-    ) -> None:
+    ) -> bool:
         """
         Handles pagination depending on the strategy:
         - Clicks a 'Next' button if `next_button_locator` is provided.
@@ -149,50 +151,41 @@ class Spider(Skeleton):
             scroll (bool, optional): Enables infinite scrolling.
             max_pages (int): Maximum number of pages to prevent infinite loops.
         """
-
         # Overriding pagination options if provided.
-        if override_pag_opts:
-            next_button_locator: Optional[Locator] = (
-                override_pag_opts.next_button_locator
-            )
-            next_page_url_fn: Optional[Callable[[int], str]] = (
-                override_pag_opts.next_page_url_fn
-            )
-            scroll: bool = override_pag_opts.scroll
-            max_pages: int = override_pag_opts.max_pages
-        elif self.pagination_opts:
-            next_button_locator = self.pagination_opts.next_button_locator
-            next_page_url_fn = self.pagination_opts.next_page_url_fn
-            scroll = self.pagination_opts.scroll
-            max_pages = self.pagination_opts.max_pages
-        # If there are no pagination options, there's nothing
-        # to paginate.
-        else:
-            return
+        pag_opts: Spider.PaginationOptions = override_pag_opts or self.pagination_opts
+
+        if pag_opts.curr_page > pag_opts.max_pages:
+            return False
 
         # Pagination logic - flipping to the next page.
-        for page in range(1, max_pages + 1):
-            # TODO: Check if this works with the actual
-            # scraping.
-            if scroll:
-                self.__scroll_to_bottom()
-                continue
+        # There are cases you need to scroll to the bottom
+        # of each page for elements to appear.
+        if pag_opts.scroll:
+            self.__scroll_to_bottom()
+            time.sleep(2)  # Waiting for the page to load.
 
-            if next_page_url_fn:
-                next_url: str = next_page_url_fn(page)
-                if next_url:
-                    self.driver.get(next_url)
-                    continue
+        # If we have more pages to scrape, we'll return True.
+        if pag_opts.next_page_url_fn:
+            next_url: str = pag_opts.next_page_url_fn(
+                pag_opts.curr_page,
+            )
+            if next_url:
+                self.driver.get(next_url)
+                pag_opts.curr_page += 1
+                return True
 
-            if next_button_locator:
-                try:
-                    next_button: WebElement = self.driver.find_element(
-                        next_button_locator.type,
-                        next_button_locator.value,
-                    )
-                    if next_button.is_displayed():
-                        next_button.click()
-                        time.sleep(2)  # Loading time.
-                        continue
-                except (NoSuchElementException, TimeoutException):
-                    break  # No more pages to load.
+        if pag_opts.next_button_locator:
+            try:
+                next_button: WebElement = self.driver.find_element(
+                    pag_opts.next_button_locator.type,
+                    pag_opts.next_button_locator.value,
+                )
+                if next_button.is_displayed():
+                    next_button.click()
+                    time.sleep(2)  # Loading time.
+                    pag_opts.curr_page += 1
+                    return True
+            except (NoSuchElementException, TimeoutException):
+                return False  # No more pages to load.
+
+        return False

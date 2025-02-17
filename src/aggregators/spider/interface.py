@@ -27,7 +27,6 @@ class Skeleton(ABC):
     def scrape(
         self,
         url: str,
-        callback: Optional[Callable[[Data], None]] = None,
     ) -> Optional[Data]:
         """Scrapes data from a given URL.
 

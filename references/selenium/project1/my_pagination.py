@@ -1,52 +1,54 @@
 from selenium.common.exceptions import NoSuchElementException, TimeoutException
 
 
-class Spider:
-    def paginate(
-        self,
-        next_button_locator: Optional[Locator] = None,
-        next_page_url_fn: Optional[Callable[[int], str]] = None,
-        scroll: bool = False,
-        max_pages: int = 10,
-    ) -> None:
-        """
-        Handles pagination based on the provided strategy:
-        - Clicks a 'Next' button if `next_button_locator` is provided.
-        - Navigates using URL pattern if `next_page_url_fn` is provided.
-        - Scrolls down for infinite scrolling if `scroll` is True.
+def paginate(
+    self,
+    override_pag_opts: Optional[PaginationOptions] = None,
+) -> bool:
+    """
+    Attempts to move to the next page. Returns True if successful, False otherwise.
+    """
+    if override_pag_opts:
+        next_button_locator = override_pag_opts.next_button_locator
+        next_page_url_fn = override_pag_opts.next_page_url_fn
+        scroll = override_pag_opts.scroll
+        max_pages = override_pag_opts.max_pages
+    elif self.pagination_opts:
+        next_button_locator = self.pagination_opts.next_button_locator
+        next_page_url_fn = self.pagination_opts.next_page_url_fn
+        scroll = self.pagination_opts.scroll
+        max_pages = self.pagination_opts.max_pages
+    else:
+        return False  # No pagination options set
 
-        Args:
-            next_button_locator (Locator, optional): Locator for the "Next" button.
-            next_page_url_fn (Callable[[int], str], optional): Function to generate paginated URLs.
-            scroll (bool, optional): Enables infinite scrolling.
-            max_pages (int): Maximum number of pages to prevent infinite loops.
-        """
-        for page in range(1, max_pages + 1):
-            if scroll:
-                self._scroll_down()
-                continue
+    for page in range(1, max_pages + 1):
+        if scroll:
+            prev_height = self.driver.execute_script(
+                "return document.body.scrollHeight"
+            )
+            self.__scroll_to_bottom()
+            time.sleep(2)  # Allow time for new content to load
+            new_height = self.driver.execute_script("return document.body.scrollHeight")
+            if new_height > prev_height:
+                return True  # Successfully scrolled
+            return False  # No more content to load
 
-            if next_page_url_fn:
-                next_url = next_page_url_fn(page)
-                if next_url:
-                    self.driver.get(next_url)
-                    continue
+        if next_page_url_fn:
+            next_url = next_page_url_fn(page)
+            if next_url:
+                self.driver.get(next_url)
+                return True  # Successfully navigated
 
-            if next_button_locator:
-                try:
-                    next_button = self.driver.find_element(
-                        next_button_locator.type, next_button_locator.value
-                    )
-                    if next_button.is_displayed():
-                        next_button.click()
-                        time.sleep(2)  # Allow page load
-                        continue
-                except (NoSuchElementException, TimeoutException):
-                    break  # No more pages
+        if next_button_locator:
+            try:
+                next_button = self.driver.find_element(
+                    next_button_locator.type, next_button_locator.value
+                )
+                if next_button.is_displayed():
+                    next_button.click()
+                    time.sleep(2)  # Allow time for loading
+                    return True  # Successfully clicked next button
+            except (NoSuchElementException, TimeoutException):
+                return False  # No more pages available
 
-            break  # Exit if no pagination method applies
-
-    def _scroll_down(self):
-        """Scrolls to the bottom of the page to trigger loading more content."""
-        self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-        time.sleep(2)  # Adjust based on loading behavior
+    return False  # Exhausted pagination options
