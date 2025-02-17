@@ -26,6 +26,13 @@ def get_audiobooks(
     spider: Spider = Spider(
         root_url=url,
         options_to_set=options_to_set,
+        pagination_opts=Spider.PaginationOptions(
+            next_button_locator=Locator(
+                By.XPATH,
+                './/span[contains(@class , "nextButton")]',
+                "next button",
+            )
+        ),
     ).init_driver(
         driver_type,
     )
@@ -82,4 +89,4 @@ def get_audiobooks(
             )
             > 4,
         ),
-    ).scrape(url=url)
+    ).scrape()

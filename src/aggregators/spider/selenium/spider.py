@@ -25,7 +25,7 @@ class Spider(Skeleton):
         - max_pages (int, optional): Maximum number of pages to scrape.
         """
 
-        next_button_locator: Optional[Locator]
+        next_button_locator: Optional[Locator] = None
         next_page_url_fn: Optional[Callable[[int], str]] = None
         scroll: bool = False
         max_pages: int = 100
@@ -87,7 +87,6 @@ class Spider(Skeleton):
 
     def scrape(
         self,
-        url: str,
         override_pag_opts: Optional[PaginationOptions] = None,
     ) -> Optional[Data]:
         """Scrapes data from a given URL and returns the data

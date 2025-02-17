@@ -26,9 +26,8 @@ class Skeleton(ABC):
     @abstractmethod
     def scrape(
         self,
-        url: str,
     ) -> Optional[Data]:
-        """Scrapes data from a given URL.
+        """Scrapes data from URL given to an internal driver.
 
         - If `callback` is provided, calls it with the scraped
         data (for Scrapy).
