@@ -88,13 +88,13 @@ class Spider(Skeleton):
     def scrape(
         self,
         override_pag_opts: Optional[PaginationOptions] = None,
-    ) -> Optional[Data]:
+    ) -> Self:
         """Scrapes data from a given URL and returns the data
         directly.
         """
         if not self.tree_root:
             print("No container tree sets.")
-            return None
+            return self
 
         data: dict[str, list[str]] = {}
 
@@ -104,18 +104,17 @@ class Spider(Skeleton):
                 break
 
         self.driver.quit()
-        return pd.DataFrame(data)
+        self.__data = pd.DataFrame(data)
+        return self
 
     def process(
         self,
-        data: Data,
-    ) -> Output:
+    ) -> Self:
         """Processes the scraped data and returns the output."""
-        pass
+        return self
 
     def save_data(
         self,
-        data: Union[Output, Data],
         path: str,
         extension: SupportedOutput = SupportedOutput.CSV,
     ) -> Self:
@@ -124,6 +123,13 @@ class Spider(Skeleton):
 
         Raises an error is the writing had failed.
         """
+        data: Data = self.__data
+        if not data:
+            print("No data to save.")
+            return self
+
+        path = f"{path}.{extension}"
+
         if isinstance(data, pd.DataFrame) or isinstance(data, pd.Series):
             if extension == SupportedOutput.CSV:
                 data.to_csv(path, index=False)

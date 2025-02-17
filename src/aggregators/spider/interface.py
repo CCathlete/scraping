@@ -26,7 +26,7 @@ class Skeleton(ABC):
     @abstractmethod
     def scrape(
         self,
-    ) -> Optional[Data]:
+    ) -> Self:
         """Scrapes data from URL given to an internal driver.
 
         - If `callback` is provided, calls it with the scraped
@@ -39,15 +39,13 @@ class Skeleton(ABC):
     @abstractmethod
     def process(
         self,
-        data: Data,
-    ) -> Output:
+    ) -> Self:
         """Processes the scraped data and returns the output."""
         pass
 
     @abstractmethod
     def save_data(
         self,
-        data: Union[Output, Data],
         path: str,
         extension: SupportedOutput = SupportedOutput.CSV,
     ) -> Self:
@@ -57,3 +55,12 @@ class Skeleton(ABC):
         Raises an error is the writing had failed.
         """
         pass
+
+    @abstractmethod
+    def get_data(
+        self,
+    ) -> Data:
+        """
+        Returns the scraped data.
+        """
+        return self.__data
