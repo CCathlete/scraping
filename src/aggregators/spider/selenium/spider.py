@@ -213,3 +213,6 @@ class Spider(Skeleton):
                 return False  # No more pages to load.
 
         return False
+
+    def get_data(self):
+        return super().get_data()
