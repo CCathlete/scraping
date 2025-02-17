@@ -3,11 +3,13 @@ Selenium based implementation of the spider.Skeleton
 interface.
 """
 
+import time
 from ..interface import Skeleton
 from src.imports.selenium_imports import *
 from src.imports.data import *
 from src.imports.typing import *
 from src.entities.container import Container
+from src.entities.locator import Locator
 
 
 class Spider(Skeleton):
@@ -97,10 +99,26 @@ class Spider(Skeleton):
         """
         pass
 
-    # TODO: Implement this.
-    def paginate(self) -> None:
+    def __scroll_to_bottom(self):
         """
-        Handles pagination based on the provided strategy:
+        Scrolls to the bottom of the page, triggering
+        a javascript function.
+        """
+        self.driver.execute_script(
+            "window.scrollTo(0, document.body.scrollHeight);",
+        )
+        time.sleep(2)
+
+    # TODO: Implement this.
+    def paginate(
+        self,
+        next_button_locator: Optional[Locator],
+        next_page_url_fn: Optional[Callable[[int], str]] = None,
+        scroll: bool = False,
+        max_pages: int = 100,
+    ) -> None:
+        """
+        Handles pagination depending on the strategy:
         - Clicks a 'Next' button if `next_button_locator` is provided.
         - Navigates using URL pattern if `next_page_url_fn` is provided.
         - Scrolls down for infinite scrolling if `scroll` is True.
@@ -111,3 +129,36 @@ class Spider(Skeleton):
             scroll (bool, optional): Enables infinite scrolling.
             max_pages (int): Maximum number of pages to prevent infinite loops.
         """
+
+        for page in range(1, max_pages + 1):
+            if scroll:
+                self.__scroll_to_bottom()
+                continue
+
+            if next_page_url_fn:
+                next_url: str = next_page_url_fn(page)
+                if next_url:
+                    self.driver.get(next_url)
+                    continue
+
+            if next_button_locator:
+                try:
+                    next_button: WebElement = self.driver.find_element(
+                        next_button_locator.type,
+                        next_button_locator.value,
+                    )
+                    if next_button.is_displayed():
+                        next_button.click()
+                        time.sleep(2)  # Loading time.
+                        continue
+                except (NoSuchElementException, TimeoutException):
+                    break  # No more pages to load.
+
+    @dataclass
+    class PaginationOptions:
+        """Configuration options for pagination."""
+
+        next_button_locator: Optional[Locator]
+        next_page_url_fn: Optional[Callable[[int], str]] = None
+        scroll: bool = False
+        max_pages: int = 100
