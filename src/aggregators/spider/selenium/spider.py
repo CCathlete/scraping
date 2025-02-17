@@ -15,13 +15,37 @@ from src.entities.locator import Locator
 class Spider(Skeleton):
     """A spider that uses Selenium to scrape data."""
 
+    @dataclass
+    class PaginationOptions:
+        """Configuration options for pagination.
+        Fields:
+        - next_button_locator (Locator): Locator for the "Next" button.
+        - next_page_url_fn (Callable[[int], str], optional): Function to generate the next page URL.
+        - scroll (bool, optional): Whether to scroll down for infinite scrolling.
+        - max_pages (int, optional): Maximum number of pages to scrape.
+        """
+
+        next_button_locator: Optional[Locator]
+        next_page_url_fn: Optional[Callable[[int], str]] = None
+        scroll: bool = False
+        max_pages: int = 100
+
     def __init__(
         self,
         root_url: str = "https://www.google.com",
         options_to_set: list[str] = ["headless"],
+        pagination_opts: Optional[PaginationOptions] = None,
     ) -> None:
         self.root_url = root_url
         self.options_to_set = options_to_set
+        if pagination_opts:
+            self.pagination_opts = pagination_opts
+
+    def set_default_pagination_options(self, opts: PaginationOptions):
+        """
+        Registers new default pagination options to the spider.
+        """
+        self.pagination_opts = opts
 
     def set_container_tree(
         self,
@@ -109,13 +133,9 @@ class Spider(Skeleton):
         )
         time.sleep(2)
 
-    # TODO: Implement this.
     def paginate(
         self,
-        next_button_locator: Optional[Locator],
-        next_page_url_fn: Optional[Callable[[int], str]] = None,
-        scroll: bool = False,
-        max_pages: int = 100,
+        override_pag_opts: Optional[PaginationOptions] = None,
     ) -> None:
         """
         Handles pagination depending on the strategy:
@@ -130,7 +150,30 @@ class Spider(Skeleton):
             max_pages (int): Maximum number of pages to prevent infinite loops.
         """
 
+        # Overriding pagination options if provided.
+        if override_pag_opts:
+            next_button_locator: Optional[Locator] = (
+                override_pag_opts.next_button_locator
+            )
+            next_page_url_fn: Optional[Callable[[int], str]] = (
+                override_pag_opts.next_page_url_fn
+            )
+            scroll: bool = override_pag_opts.scroll
+            max_pages: int = override_pag_opts.max_pages
+        elif self.pagination_opts:
+            next_button_locator = self.pagination_opts.next_button_locator
+            next_page_url_fn = self.pagination_opts.next_page_url_fn
+            scroll = self.pagination_opts.scroll
+            max_pages = self.pagination_opts.max_pages
+        # If there are no pagination options, there's nothing
+        # to paginate.
+        else:
+            return
+
+        # Pagination logic - flipping to the next page.
         for page in range(1, max_pages + 1):
+            # TODO: Check if this works with the actual
+            # scraping.
             if scroll:
                 self.__scroll_to_bottom()
                 continue
@@ -153,12 +196,3 @@ class Spider(Skeleton):
                         continue
                 except (NoSuchElementException, TimeoutException):
                     break  # No more pages to load.
-
-    @dataclass
-    class PaginationOptions:
-        """Configuration options for pagination."""
-
-        next_button_locator: Optional[Locator]
-        next_page_url_fn: Optional[Callable[[int], str]] = None
-        scroll: bool = False
-        max_pages: int = 100
