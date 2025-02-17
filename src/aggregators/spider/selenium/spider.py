@@ -99,8 +99,10 @@ class Spider(Skeleton):
 
         data: dict[str, list[str]] = {}
 
-        while self.paginate(override_pag_opts):
-            self.tree_rot.extract(data)
+        while True:
+            self.tree_root.extract(data)
+            if not self.paginate(override_pag_opts):
+                break
 
         self.driver.quit()
         return pd.DataFrame(data)
@@ -152,7 +154,13 @@ class Spider(Skeleton):
             max_pages (int): Maximum number of pages to prevent infinite loops.
         """
         # Overriding pagination options if provided.
-        pag_opts: Spider.PaginationOptions = override_pag_opts or self.pagination_opts
+        try:
+            pag_opts: Spider.PaginationOptions = (
+                override_pag_opts or self.pagination_opts
+            )
+        # No pagination defined.
+        except (NoSuchAttributeException, AttributeError):
+            return False
 
         if pag_opts.curr_page > pag_opts.max_pages:
             return False
