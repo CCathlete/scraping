@@ -118,13 +118,30 @@ class Spider(Skeleton):
         data: Union[Output, Data],
         path: str,
         extension: SupportedOutput = SupportedOutput.CSV,
-    ) -> None:
+    ) -> Self:
         """Gets data, a path to a parent folder and an
         extension and saves the data to a file.
 
         Raises an error is the writing had failed.
         """
-        pass
+        if isinstance(data, pd.DataFrame) or isinstance(data, pd.Series):
+            if extension == SupportedOutput.CSV:
+                data.to_csv(path, index=False)
+            elif extension == SupportedOutput.XLSX or extension == SupportedOutput.XLS:
+                data.to_excel(path, index=False)
+            elif extension == SupportedOutput.JSON:
+                data.to_json(path, orient="records")
+            elif extension == SupportedOutput.HTML:
+                data.to_html(path, index=False)
+            elif extension == SupportedOutput.PARQUET:
+                data.to_parquet(path, index=False)
+            elif extension == SupportedOutput.PICKLE:
+                data.to_pickle(path)
+            elif extension == SupportedOutput.STATA:
+                data.to_stata(path)
+            # TODO: Add more formats.
+
+        return self
 
     def __scroll_to_bottom(self):
         """

@@ -50,7 +50,7 @@ class Skeleton(ABC):
         data: Union[Output, Data],
         path: str,
         extension: SupportedOutput = SupportedOutput.CSV,
-    ) -> None:
+    ) -> Self:
         """Gets data, a path to a parent folder and an
         extension and saves the data to a file.
 
