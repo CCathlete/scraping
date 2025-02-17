@@ -131,14 +131,8 @@ class Spider(Skeleton):
                 data.to_excel(path, index=False)
             elif extension == SupportedOutput.JSON:
                 data.to_json(path, orient="records")
-            elif extension == SupportedOutput.HTML:
-                data.to_html(path, index=False)
-            elif extension == SupportedOutput.PARQUET:
-                data.to_parquet(path, index=False)
             elif extension == SupportedOutput.PICKLE:
                 data.to_pickle(path)
-            elif extension == SupportedOutput.STATA:
-                data.to_stata(path)
             # TODO: Add more formats.
 
         return self
