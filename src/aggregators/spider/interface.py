@@ -15,6 +15,8 @@ class Skeleton(ABC):
     spider.
     """
 
+    __data: Data
+
     @abstractmethod
     def init_driver(
         self,
