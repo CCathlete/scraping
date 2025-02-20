@@ -34,7 +34,8 @@ def get_audiobooks(
                 By.XPATH,
                 './/span[contains(@class , "nextButton")]',
                 "next button",
-            )
+            ),
+            max_pages=100,
         ),
     ).init_driver(
         driver_type,

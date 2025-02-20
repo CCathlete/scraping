@@ -48,6 +48,8 @@ def ebooks_ddd() -> None:
         print(f"Some value had an error: {err}")
     except (TimeoutException, TimeoutError) as timeout:
         print(f"Timeout: {timeout}")
+    except RuntimeError:
+        print("No logic errors, but some runtime error occured.")
 
 
 if __name__ == "__main__":
