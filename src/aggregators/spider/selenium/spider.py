@@ -28,14 +28,20 @@ class Spider(Skeleton):
         next_button_locator: Optional[Locator] = None
         next_page_url_fn: Optional[Callable[[int], str]] = None
         scroll: bool = False
-        max_pages: int = 100
+        max_pages: int = 3
         curr_page: int = 1
 
     def __init__(
         self,
         root_url: str = "https://www.google.com",
         options_to_set: list[str] = ["headless"],
-        pagination_opts: Optional[PaginationOptions] = None,
+        pagination_opts: PaginationOptions = PaginationOptions(
+            next_button_locator= None,
+            next_page_url_fn= None,
+            scroll= False,
+            max_pages= 3,
+            curr_page= 1,
+            ),
     ) -> None:
         self.root_url = root_url
         self.options_to_set = options_to_set
@@ -192,8 +198,17 @@ class Spider(Skeleton):
         # There are cases you need to scroll to the bottom
         # of each page for elements to appear.
         if pag_opts.scroll:
+            last_height: int = self.driver.execute_script(
+                "return document.body.scrollHeight",
+                )
             self.__scroll_to_bottom()
             time.sleep(2)  # Waiting for the page to load.
+            new_height: int = self.driver.execute_script(
+                "return document.body.scrollHeight",
+                )
+            # If the height hasn't changed, we've reached the end.
+            if new_height == last_height:
+                return False
 
         # If we have more pages to scrape, we'll return True.
         if pag_opts.next_page_url_fn:
