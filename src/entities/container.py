@@ -18,7 +18,7 @@ class Container:
         name: str,
         # Can't be optional.
         parent_element: Union[WebElement, Driver],
-        locator: Optional[Locator] = None,
+        locator: Locator,
         element: Optional[WebElement] = None,
         sub_containers: list["Container"] = [],
         sub_locators: list[Locator] = [],
@@ -33,39 +33,16 @@ class Container:
                     (locator.type, locator.value),
                 ),
             )
-        elif element and not locator:
-            self.element = element
-            self.locator = None
         elif element and locator:
             self.element = element
             self.locator = locator
         else:
             raise ValueError(
-                "Either locator, element or both must be provided.",
+                "Locator must be provided.",
             )
 
         self.sub_containers = sub_containers
         self.sub_locators = sub_locators
-
-    def sub_containers_from_elements(
-        self,
-        elements: list[WebElement] = [],
-        sub_locators: list[Locator] = [],
-        condition: Callable[[WebElement], bool] = lambda _: True,
-    ) -> Self:
-        """Sets sub containers from a list of web elements."""
-        self.sub_containers = [
-            Container(
-                name=f"{self.name}: {element.tag_name}",
-                parent_element=self.element,
-                element=element,
-                sub_locators=sub_locators,
-            )
-            for element in elements
-            if condition(element)
-        ]
-
-        return self
 
     def sub_containers_from_common_locator(
         self,
@@ -84,6 +61,7 @@ class Container:
             Container(
                 name=f"{self.name}: {element.tag_name}",
                 parent_element=self.element,
+                locator=common_locator,
                 element=element,
                 sub_locators=sub_locators,
             )
@@ -133,3 +111,24 @@ class Container:
             sub_container.extract(data)
 
         return data
+
+    # This needs fixing, we must pass the locator for each container.
+    # def sub_containers_from_elements(
+    #     self,
+    #     elements: list[WebElement] = [],
+    #     sub_locators: list[Locator] = [],
+    #     condition: Callable[[WebElement], bool] = lambda _: True,
+    # ) -> Self:
+    #     """Sets sub containers from a list of web elements."""
+    #     self.sub_containers = [
+    #         Container(
+    #             name=f"{self.name}: {element.tag_name}",
+    #             parent_element=self.element,
+    #             element=element,
+    #             sub_locators=sub_locators,
+    #         )
+    #         for element in elements
+    #         if condition(element)
+    #     ]
+
+    #     return self
