@@ -194,6 +194,10 @@ class Spider(Skeleton):
         if pag_opts.curr_page > pag_opts.max_pages:
             return False
 
+        print()
+        print(f"Currently scraping page {pag_opts.curr_page}")
+        print()
+
         # Pagination logic - flipping to the next page.
         # There are cases you need to scroll to the bottom
         # of each page for elements to appear.
