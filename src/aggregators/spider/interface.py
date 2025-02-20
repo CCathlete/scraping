@@ -15,8 +15,6 @@ class Skeleton(ABC):
     spider.
     """
 
-    __data: Data
-
     @abstractmethod
     def init_driver(
         self,
@@ -65,4 +63,5 @@ class Skeleton(ABC):
         """
         Returns the scraped data.
         """
-        return self.__data
+        if self.__data is not None:
+            return self.__data
