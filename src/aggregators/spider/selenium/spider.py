@@ -245,5 +245,5 @@ class Spider(Skeleton):
 
         return False
 
-    def get_data(self):
-        return super().get_data()
+    def _get_internal_data(self):
+        return self.__data

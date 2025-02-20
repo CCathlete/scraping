@@ -57,11 +57,20 @@ class Skeleton(ABC):
         pass
 
     @abstractmethod
+    def _get_internal_data(
+        self,
+    ) -> Optional[Data]:
+        """
+        Data retrieval method to be implemented by each subclass.
+        """
+        pass
+        
+
     def get_data(
         self,
-    ) -> Data:
+    ) -> Optional[Data]:
         """
         Returns the scraped data.
         """
-        if self.__data is not None:
-            return self.__data
+        return self._get_internal_data()
+        
