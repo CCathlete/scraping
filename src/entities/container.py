@@ -44,6 +44,28 @@ class Container:
         self.sub_containers = sub_containers
         self.sub_locators = sub_locators
 
+    def refresh_subtree(
+        self,
+        parent_element: Union[WebElement, Driver]
+    ) -> Self:
+        """
+        Refreshes the element of each container in the container tree
+        top down.
+        """
+
+        if self.locator:
+            self.element = wait(parent_element, 10).until(
+                EC.presence_of_element_located(
+                    (self.locator.type, self.locator.value)
+                )
+            )
+            for sub_container in self.sub_containers:
+                # Now self.element is the parent element.
+                sub_container.refresh_subtree(self.element)
+
+        return self
+
+
     def sub_containers_from_common_locator(
         self,
         common_locator: Locator,

@@ -200,7 +200,6 @@ class Spider(Skeleton):
 
         if pag_opts.next_button_locator:
             try:
-                # TODO: Fix bug.
                 next_button: WebElement = self.driver.find_element(
                     pag_opts.next_button_locator.type,
                     pag_opts.next_button_locator.value,
@@ -208,15 +207,11 @@ class Spider(Skeleton):
                 if next_button.is_displayed():
                     next_button.click()
                     time.sleep(2)  # Loading time.
-                    # Refreshing the container tree root since the next button
+                    # Refreshing the container tree since the next button
                     # caused a new DOM element to be created.
                     if self.tree_root:
-                        if self.tree_root.locator:
-                            self.tree_root.element = wait(self.driver, 10).until(
-                                EC.presence_of_element_located(
-                                    (self.tree_root.locator.type, self.tree_root.locator.value),
-                                )
-                            )
+                        self.tree_root.refresh_subtree(self.driver)
+
                     pag_opts.curr_page += 1
                     return True
             except (NoSuchElementException, TimeoutException):
