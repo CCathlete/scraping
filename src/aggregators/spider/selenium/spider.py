@@ -124,13 +124,20 @@ class Spider(Skeleton):
         Raises an error is the writing had failed.
         """
         data: Data = self.__data
-        if not data:
+        data_is_pandas_type: bool = isinstance(
+            data, pd.DataFrame,
+            ) or isinstance(
+                data, pd.Series,
+                )
+        data_is_empty: bool = data_is_pandas_type and data.empty
+
+        if data is None or data_is_empty:
             print("No data to save.")
             return self
 
         path = f"{path}.{extension}"
 
-        if isinstance(data, pd.DataFrame) or isinstance(data, pd.Series):
+        if data_is_pandas_type:
             if extension == SupportedOutput.CSV:
                 data.to_csv(path, index=False)
             elif extension == SupportedOutput.XLSX or extension == SupportedOutput.XLS:
