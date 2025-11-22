@@ -10,12 +10,8 @@ import pandas as pd
 
 from doggopyr.tools.helper_functions import Module as hf
 
-db_engine, project_root, input_files, log_dir, logger = hf.init_locations_and_dotenv(
-    project_root_marker="src"
-)
 
-
-class IngestData:
+class Ingestor:
     """
     Initializes environment and provides methods for interacting with the database.
 
@@ -29,7 +25,7 @@ class IngestData:
     TARGET_TABLE = "geopolitics_news"
 
     # Define the DDL statement for the news table
-    CREATE_SQL_DDL = f"""
+    CREATE_SQL_DDL = f"""--sql
     CREATE TABLE IF NOT EXISTS {TARGET_TABLE} (
         article_id VARCHAR(255) PRIMARY KEY,
         url TEXT NOT NULL UNIQUE,
@@ -39,7 +35,8 @@ class IngestData:
         source_name VARCHAR(255),
         scraper_run_id VARCHAR(50),
         scraped_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-    );
+    )
+    ;
     """
 
     def __init__(self):
@@ -47,11 +44,11 @@ class IngestData:
         Initializes the database engine and logging using the helper package.
         """
         # hf.init_locations_and_dotenv loads .env, sets up logging, and creates the engine
-        self.engine, self.project_root, _, self.log_dir, self.logger = (
+        self.engine, self.project_root, self.input_files, self.log_dir, self.logger = (
             hf.init_locations_and_dotenv(
                 logger_name="NewsIngestor",
                 log_file_prefix="geopolitics_ingest",
-                project_root_marker="src",  # Assumes 'src' is the marker in the new repo
+                project_root_marker="src",
             )
         )
         self.logger.info("News Ingestor initialized and engine created.")
@@ -61,9 +58,9 @@ class IngestData:
         """Ensures the target table exists before any scraping occurs."""
         self.logger.info("Ensuring target table '%s' exists...", self.TARGET_TABLE)
         try:
-            # Uses the helper function to execute DDL
             hf.execute_query(self.CREATE_SQL_DDL, engine=self.engine)
             self.logger.info("Table '%s' is ready.", self.TARGET_TABLE)
+
         except Exception as e:
             self.logger.error("Failed to create table %s: %s", self.TARGET_TABLE, e)
             raise
@@ -83,7 +80,6 @@ class IngestData:
             "Starting load of %d articles into table '%s'.", len(df), self.TARGET_TABLE
         )
         try:
-            # Use pandas to_sql for efficient bulk insertion
             rows_inserted = df.to_sql(
                 name=self.TARGET_TABLE,
                 con=self.engine,

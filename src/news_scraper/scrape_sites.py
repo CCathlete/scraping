@@ -18,7 +18,7 @@ from pydantic import BaseModel, Field, ValidationError
 import ollama
 
 # Import the IngestData class from the local package
-from .ingest_data import IngestData
+from src.news_scraper.ingest_data import Ingestor
 
 
 # --- 1. Pydantic Schema for LLM Output ---
@@ -73,7 +73,7 @@ class NewsScraper:
         self.site_name = site_name
         self.base_url = base_url
         self.run_id = str(uuid.uuid4())
-        self.ingestor = IngestData()
+        self.ingestor = Ingestor()
         self.logger = self.ingestor.logger
         self.logger.info(
             "NewsScraper initialized for site: %s. Run ID: %s",
@@ -120,6 +120,8 @@ class NewsScraper:
             "The output MUST be a valid JSON object that strictly conforms to the provided JSON schema."
             f"\n\n--- DOCUMENT START ---\n\n{cleaned_text[:10000]}"  # Limit size to prevent token overflow
         )
+
+        response: ollama.GenerateResponse | None = None
 
         try:
             response = ollama.generate(
@@ -173,7 +175,7 @@ class NewsScraper:
             len(urls_to_scrape),
         )
 
-        all_scraped_data = []
+        all_scraped_data: list[dict[str, Any]] = []
 
         for url in urls_to_scrape:
             html_content = self.fetch_page(url)
