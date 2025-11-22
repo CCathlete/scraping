@@ -5,11 +5,14 @@ Handles database setup and data ingestion (Load part of ETL) for the
 geopolitics news scraper. Uses the published 'doggopyr' helper package.
 """
 
-from typing import Optional
+from typing import Optional, Literal
 import pandas as pd
-import logging
 
 from doggopyr.tools.helper_functions import Module as hf
+
+db_engine, project_root, input_files, log_dir, logger = hf.init_locations_and_dotenv(
+    project_root_marker="src"
+)
 
 
 class IngestData:
@@ -68,9 +71,9 @@ class IngestData:
     def load_data(
         self,
         df: pd.DataFrame,
-        if_exists: str = "append",
+        if_exists: Literal["append", "replace", "fail"] = "append",
         chunksize: Optional[int] = 1000,
-    ) -> int:
+    ) -> int | None:
         """Loads a DataFrame of scraped news into the PostgreSQL table."""
         if df.empty:
             self.logger.warning("DataFrame is empty. Skipping load.")
@@ -94,6 +97,7 @@ class IngestData:
                 self.TARGET_TABLE,
             )
             return rows_inserted
+
         except Exception as e:
             # This is common for UNIQUE or PRIMARY KEY violations when scraping
             # the same articles again.
